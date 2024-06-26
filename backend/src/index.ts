@@ -3,6 +3,7 @@ import cors from "cors";
 import "dotenv/config";
 import { connectDB } from "./db/connect";
 import notFoundMiddleware from "./middleware/not-found";
+import errorHandlerMiddleWare from "./middleware/error-handler";
 const app = express();
 
 app.use(express.json());
@@ -14,6 +15,7 @@ app.get("/api/v1/test", (req: Request, res: Response) => {
 });
 
 app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleWare);
 
 const port = process.env.PORT || 8000;
 const start = async () => {
