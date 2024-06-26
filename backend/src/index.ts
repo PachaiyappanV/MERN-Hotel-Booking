@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import "dotenv/config";
 import { connectDB } from "./db/connect";
+import notFoundMiddleware from "./middleware/not-found";
 const app = express();
 
 app.use(express.json());
@@ -12,8 +13,9 @@ app.get("/api/v1/test", (req: Request, res: Response) => {
   res.send("Hello from api endpoint");
 });
 
-const port = process.env.PORT || 8000;
+app.use(notFoundMiddleware);
 
+const port = process.env.PORT || 8000;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI as string);
