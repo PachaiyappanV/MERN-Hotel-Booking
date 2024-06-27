@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import "dotenv/config";
+import "express-async-errors";
 import { connectDB } from "./db/connect";
 import notFoundMiddleware from "./middleware/not-found";
 import errorHandlerMiddleWare from "./middleware/error-handler";
