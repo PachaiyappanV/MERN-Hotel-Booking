@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 import validator from "validator";
+import bcrypt from "bcryptjs";
 
 interface IUser extends Document {
   _id: string;
@@ -34,6 +35,12 @@ const UserSchema = new Schema({
     required: [true, "Please provide last name"],
     trim: true,
   },
+});
+
+UserSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 const User = mongoose.model<IUser>("User", UserSchema);
