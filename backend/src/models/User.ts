@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 
-interface IUser extends Document {
+export interface IUser extends Document {
   _id: string;
   email: string;
   password: string;

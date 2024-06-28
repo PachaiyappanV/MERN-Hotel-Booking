@@ -5,15 +5,14 @@ import "express-async-errors";
 import { connectDB } from "./db/connect";
 import notFoundMiddleware from "./middleware/not-found";
 import errorHandlerMiddleWare from "./middleware/error-handler";
+import authRouter from "./routes/authRoutes";
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.get("/api/v1/test", (req: Request, res: Response) => {
-  res.send("Hello from api endpoint");
-});
+app.use("/api/v1/auth", authRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleWare);
