@@ -1,3 +1,4 @@
 import createTokenUser from "./createTokenUser";
+import { attachCookiesToResponse } from "./jwt";
 
-export { createTokenUser };
+export { createTokenUser, attachCookiesToResponse };
