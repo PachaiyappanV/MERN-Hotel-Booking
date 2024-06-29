@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/User";
 import { attachCookiesToResponse, createTokenUser } from "../utils";
 import { StatusCodes } from "http-status-codes";
+import { BadRequestError, UnauthenticatedError } from "../error";
 
 const register = async (req: Request, res: Response) => {
   const user = await User.create(req.body);
@@ -13,7 +14,8 @@ const register = async (req: Request, res: Response) => {
     data: {
       message: "user registered successfully",
       user: {
-        name: user.firstName + " " + user.lastName,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         id: user._id,
       },
@@ -22,7 +24,30 @@ const register = async (req: Request, res: Response) => {
 };
 
 const login = async (req: Request, res: Response) => {
-  res.send("login route");
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw new BadRequestError("Please provide email and password ");
+  }
+
+  const user = await User.findOne({ email }).select("-password");
+
+  if (!user) {
+    throw new UnauthenticatedError("Invalid credentials");
+  }
+  const isPasswordCorrect = await user.comparePassword(password);
+  if (!isPasswordCorrect) {
+    throw new UnauthenticatedError("Invalid credentials");
+  }
+  const token = createTokenUser(user);
+  attachCookiesToResponse(res, token);
+  res.status(StatusCodes.OK).json({
+    status: "success",
+    data: {
+      message: "user logged in",
+      user,
+    },
+  });
 };
 
 const logout = async (req: Request, res: Response) => {
