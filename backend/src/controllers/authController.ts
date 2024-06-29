@@ -3,6 +3,7 @@ import User from "../models/User";
 import { attachCookiesToResponse, createTokenUser } from "../utils";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnauthenticatedError } from "../error";
+import bcrypt from "bcryptjs";
 
 const register = async (req: Request, res: Response) => {
   const user = await User.create(req.body);
@@ -30,12 +31,12 @@ const login = async (req: Request, res: Response) => {
     throw new BadRequestError("Please provide email and password ");
   }
 
-  const user = await User.findOne({ email }).select("-password");
+  const user = await User.findOne({ email });
 
   if (!user) {
     throw new UnauthenticatedError("Invalid credentials");
   }
-  const isPasswordCorrect = await user.comparePassword(password);
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
   if (!isPasswordCorrect) {
     throw new UnauthenticatedError("Invalid credentials");
   }
@@ -45,7 +46,12 @@ const login = async (req: Request, res: Response) => {
     status: "success",
     data: {
       message: "user logged in",
-      user,
+      user: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        id: user._id,
+      },
     },
   });
 };
