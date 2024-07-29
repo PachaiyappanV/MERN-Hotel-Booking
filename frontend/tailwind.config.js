@@ -4,7 +4,12 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        playwrite: ["Playwrite ES", "cursive"],
+        poppins: ["Poppins", "sans-serif"],
+      },
+    },
+    container: {
+      padding: {
+        md: "10rem",
       },
     },
   },
